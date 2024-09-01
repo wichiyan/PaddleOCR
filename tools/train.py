@@ -38,6 +38,7 @@ from ppocr.utils.utility import set_seed
 from ppocr.modeling.architectures import apply_to_static
 import tools.program as program
 
+#获取分布式训练的通讯通道数，一般用于设置单卡上的批次大小，batch_size
 dist.get_world_size()
 
 
@@ -49,7 +50,9 @@ def main(config, device, logger, vdl_writer, seed):
     global_config = config["Global"]
 
     # build dataloader
+    #设置信号处理器，主要是支持ctrl+c以及kill信号，终止训练
     set_signal_handlers()
+    #加载训练集，还是依据配置文件，加载数据，具体加载代码，和其他数据加载过程无异，都是Dataset、dataLoader
     train_dataloader = build_dataloader(config, "Train", device, logger, seed)
     if len(train_dataloader) == 0:
         logger.error(
@@ -249,6 +252,7 @@ def test_reader(config, device, logger):
 
 
 if __name__ == "__main__":
+    #主要根据命令行输入的配置文件等参数，初始化配置文件、设备、日志句柄和可视化句柄，奇怪的是竟然不支持visualDL，只支持wandb
     config, device, logger, vdl_writer = program.preprocess(is_train=True)
     seed = config["Global"]["seed"] if "seed" in config["Global"] else 1024
     set_seed(seed)
