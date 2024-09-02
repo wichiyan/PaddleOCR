@@ -61,7 +61,7 @@ def main(config, device, logger, vdl_writer, seed):
             + "\t2. The annotation file and path in the configuration file are provided normally."
         )
         return
-
+    #如果有验证配置，则初始化对应验证集数据
     if config["Eval"]:
         valid_dataloader = build_dataloader(config, "Eval", device, logger, seed)
     else:
